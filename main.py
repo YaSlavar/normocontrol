@@ -182,3 +182,4 @@ nc = Normocontrol("document.docx")
 print(nc.property)
 for style in nc.doc.styles.element.style_lst:
     print(style.name_val)
+
