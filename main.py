@@ -7,6 +7,7 @@ class Normocontrol:
     def __init__(self, document_path):
         self.document_path = document_path
         self.doc = docx.Document(self.document_path)
+        self.numbering_properties = {}
         self.property = {}
         self.property_constructor()
 
@@ -32,8 +33,42 @@ class Normocontrol:
 
             return ids
 
+        def get_lists_properties(_numbering):
+            """
+            Получение параметров 'Абстарктных стилей' списков
+            :param _numbering: nembering.xml извлеченный из документа
+            :return: lists_settings (dict) - словарь параметров 'Абстарктных стилей' списков
+            вида lists_settings[abstractNumId][ilvl][key][pPr_key]
+            """
+            root = ET.fromstring(_numbering)
+            namespace = _numbering.nsmap
+            lists_settings = {}
+            abstractNums = root.findall('.//w:abstractNum', namespace)
+            for abstractNum in abstractNums:
+                abstractNumId = abstractNum.attrib['{{{0}}}abstractNumId'.format(namespace['w'])]
+                lists_settings[abstractNumId] = {}
+                lvls = abstractNum.findall('.//w:lvl', namespace)
+                for lvl in lvls:
+                    ilvl = lvl.attrib['{{{0}}}ilvl'.format(namespace['w'])]
+                    lists_settings[abstractNumId][ilvl] = {}
+                    properties = lvl.getchildren()
+                    for prop in properties:
+                        key = prop.tag.split('}')[1]
+                        try:
+                            value = list(prop.attrib.values())[0]
+                            lists_settings[abstractNumId][ilvl][key] = value
+                        except IndexError:
+                            lists_settings[abstractNumId][ilvl][key] = {}
+                            pPrs = prop.getchildren()
+                            for pPr in pPrs:
+                                pPr_key = pPr.tag.split('}')[1]
+                                value = list(pPr.attrib.values())[0]
+                                lists_settings[abstractNumId][ilvl][key][pPr_key] = value
 
+            return lists_settings
 
+        _numbering = self.doc._part.numbering_part.numbering_definitions._numbering.xml
+        self.numbering_properties = get_lists_properties(_numbering)
 
         document_body_property_object = self.doc._body._element.sectPr
         self.property['document_body_property'] = {
