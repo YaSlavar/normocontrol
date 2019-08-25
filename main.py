@@ -37,37 +37,54 @@ class Normocontrol:
             """
             Получение параметров 'Абстарктных стилей' списков
             :param _numbering: nembering.xml извлеченный из документа
-            :return: lists_settings (dict) - словарь параметров 'Абстарктных стилей' списков
+            :return: numId_list (dict) - словарь параметров списков по numId
             вида lists_settings[abstractNumId][ilvl][key][pPr_key]
             """
-            root = ET.fromstring(_numbering)
+            root = ET.fromstring(_numbering.xml)
             namespace = _numbering.nsmap
-            lists_settings = {}
+
+            numId_list = {}
+            nums = root.findall('.//w:num', namespace)
+            for num in nums:
+                numId = num.attrib['{{{0}}}numId'.format(namespace['w'])]
+                abstractNums = num.findall('.//w:abstractNumId', namespace)
+                for abstractNum in abstractNums:
+                    abstractNumId = abstractNum.attrib['{{{0}}}val'.format(namespace['w'])]
+                    numId_list[numId] = abstractNumId
+
+            abstract_num_settings = {}
             abstractNums = root.findall('.//w:abstractNum', namespace)
             for abstractNum in abstractNums:
                 abstractNumId = abstractNum.attrib['{{{0}}}abstractNumId'.format(namespace['w'])]
-                lists_settings[abstractNumId] = {}
+                abstract_num_settings[abstractNumId] = {}
                 lvls = abstractNum.findall('.//w:lvl', namespace)
                 for lvl in lvls:
                     ilvl = lvl.attrib['{{{0}}}ilvl'.format(namespace['w'])]
-                    lists_settings[abstractNumId][ilvl] = {}
+                    abstract_num_settings[abstractNumId][ilvl] = {}
                     properties = lvl.getchildren()
                     for prop in properties:
                         key = prop.tag.split('}')[1]
                         try:
                             value = list(prop.attrib.values())[0]
-                            lists_settings[abstractNumId][ilvl][key] = value
+                            abstract_num_settings[abstractNumId][ilvl][key] = value
                         except IndexError:
-                            lists_settings[abstractNumId][ilvl][key] = {}
+                            abstract_num_settings[abstractNumId][ilvl][key] = {}
                             pPrs = prop.getchildren()
                             for pPr in pPrs:
-                                pPr_key = pPr.tag.split('}')[1]
-                                value = list(pPr.attrib.values())[0]
-                                lists_settings[abstractNumId][ilvl][key][pPr_key] = value
+                                pPr_attribs = pPr.attrib
+                                pPr_list = {}
+                                for pPr_attrib in pPr_attribs:
+                                    pPr_key = pPr_attrib.split('}')[1]
+                                    vpPr_alue = pPr_attribs[pPr_attrib]
+                                    pPr_list[pPr_key] = vpPr_alue
+                                abstract_num_settings[abstractNumId][ilvl][key]['pPr'] = pPr_list
 
-            return lists_settings
+            for numId in numId_list:
+                numId_list[numId] = abstract_num_settings[numId_list[numId]]
 
-        _numbering = self.doc._part.numbering_part.numbering_definitions._numbering.xml
+            return numId_list
+
+        _numbering = self.doc._part.numbering_part.numbering_definitions._numbering
         self.numbering_properties = get_lists_properties(_numbering)
 
         document_body_property_object = self.doc._body._element.sectPr
@@ -158,6 +175,18 @@ class Normocontrol:
 
                 print(images)
 
+                # Списки
+                num_property_path = paragraph._p.pPr.numPr
+                if num_property_path is not None:
+                    numId = str(num_property_path.numId.val)
+                    ilvl = str(num_property_path.ilvl.val)
+                    list_property = self.numbering_properties[numId][ilvl]
+                    list_property['numId'] = numId
+                    list_property['ilvl'] = ilvl
+
+                else:
+                    list_property = None
+
                 paragraph_property = {'index': index,
                                       'paragraph_style_name': paragraph_style_name,
                                       'font_name': font_name,
@@ -165,6 +194,7 @@ class Normocontrol:
                                       'is_bold': font_is_bold,
                                       'alignment': alignment,
                                       'text': text,
+                                      'list_property': list_property,
                                       'paragraph_format': {
                                           'left_indent': left_indent,
                                           'first_line_indent': first_line_indent,
@@ -180,6 +210,5 @@ class Normocontrol:
 
 nc = Normocontrol("document.docx")
 print(nc.property)
-for style in nc.doc.styles.element.style_lst:
-    print(style.name_val)
-
+# for style in nc.doc.styles.element.style_lst:
+#     print(style.name_val)
