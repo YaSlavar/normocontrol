@@ -16,9 +16,13 @@ class Normocontrol:
 
     def property_constructor(self):
 
-        def get_image_id_in_paragraph(par):
+        def get_image_id_in_paragraph(paragraph):
+            """
+
+            :type paragraph: object
+            """
             ids = []
-            root = ET.fromstring(par._p.xml)
+            root = ET.fromstring(paragraph._p.xml)
             namespace = {
                 'a': "http://schemas.openxmlformats.org/drawingml/2006/main",
                 'r': "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
@@ -61,7 +65,7 @@ class Normocontrol:
                 for lvl in lvls:
                     ilvl = lvl.attrib['{{{0}}}ilvl'.format(namespace['w'])]
                     abstract_num_settings[abstractNumId][ilvl] = {}
-                    properties = lvl.getchildren()
+                    properties = list(lvl)
                     for prop in properties:
                         key = prop.tag.split('}')[1]
                         try:
@@ -69,7 +73,7 @@ class Normocontrol:
                             abstract_num_settings[abstractNumId][ilvl][key] = value
                         except IndexError:
                             abstract_num_settings[abstractNumId][ilvl][key] = {}
-                            pPrs = prop.getchildren()
+                            pPrs = list(prop)
                             for pPr in pPrs:
                                 pPr_attribs = pPr.attrib
                                 pPr_list = {}
@@ -173,17 +177,14 @@ class Normocontrol:
                 for image_id in image_id_list:
                     images.append(self.doc.part.related_parts[image_id])
 
-                print(images)
-
                 # Списки
-                num_property_path = paragraph._p.pPr.numPr
-                if num_property_path is not None:
-                    numId = str(num_property_path.numId.val)
-                    ilvl = str(num_property_path.ilvl.val)
+                paragraph_proprty_path = paragraph._p.pPr
+                if paragraph_proprty_path is not None and paragraph_proprty_path.numPr is not None:
+                    numId = str(paragraph_proprty_path.numPr.numId.val)
+                    ilvl = str(paragraph_proprty_path.numPr.ilvl.val)
                     list_property = self.numbering_properties[numId][ilvl]
                     list_property['numId'] = numId
                     list_property['ilvl'] = ilvl
-
                 else:
                     list_property = None
 
@@ -200,7 +201,8 @@ class Normocontrol:
                                           'first_line_indent': first_line_indent,
                                           'line_spacing': line_spacing,
                                           'line_spacing_rule': line_spacing_rule,
-                                      }}
+                                      },
+                                      'images': images}
                 print(paragraph_property)
                 self.property['paragraphs'].append(paragraph_property)
 
@@ -210,5 +212,5 @@ class Normocontrol:
 
 nc = Normocontrol("document.docx")
 print(nc.property)
-# for style in nc.doc.styles.element.style_lst:
-#     print(style.name_val)
+
+
