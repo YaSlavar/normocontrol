@@ -1,0 +1,26 @@
+{
+  "mockup_properties": {
+    "path": "document_body_property",
+    "properties": {
+      "top": 20,
+      "bottom": 20,
+      "left": 30,
+      "right": 10
+      },
+    "mistake": 2,
+    "condition": null,
+    "error_message": "Не соблюдены размеры полей: {}"
+  },
+  "primary_text_style":{
+    "path": "paragraphs",
+    "properties": {
+      "top": 20,
+      "bottom": 20,
+      "left": 30,
+      "right": 10
+      },
+    "mistake": 2,
+    "condition": null,
+    "error_message": "Не соблюдены размеры полей: {}"
+  }
+}
