@@ -7,20 +7,26 @@
       "left": 30,
       "right": 10
       },
-    "mistake": 2,
     "condition": null,
     "error_message": "Не соблюдены размеры полей: {}"
   },
   "primary_text_style":{
     "path": "paragraphs",
-    "properties": {
-      "top": 20,
-      "bottom": 20,
-      "left": 30,
-      "right": 10
+    "text_property": {
+        "font_name": "Times New Roman",
+        "font_size": 14
       },
-    "mistake": 2,
+    "paragraph_format": {
+        "alignment": "JUSTIFY",
+        "left_indent": 0,
+        "right_indent": 0,
+        "first_line_indent":12.5,
+        "space_after": 0,
+        "space_before": 0,
+        "line_spacing": 0,
+        "line_spacing_rule": "ONE_POINT_FIVE"
+    },
     "condition": null,
-    "error_message": "Не соблюдены размеры полей: {}"
+    "error_message": "Не соблюдены параметры основного текста {} в абзаце {}"
   }
 }

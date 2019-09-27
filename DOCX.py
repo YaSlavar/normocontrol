@@ -115,11 +115,14 @@ class DOCX:
             try:
                 paragraph_style_id = paragraph.style.style_id
                 paragraph_style_name = paragraph.style.name
+                paragraph_style_type = paragraph.style.type
                 paragraph_base_style = paragraph.style.base_style
                 if paragraph_base_style is not None:
                     paragraph_base_style_name = paragraph_base_style.name
+                    paragraph_base_style_type = paragraph_base_style.type
                 else:
                     paragraph_base_style_name = None
+                    paragraph_base_style_type = None
 
                 text = paragraph.text
 
@@ -136,6 +139,8 @@ class DOCX:
                                 font_name = base_style_font.name
                     if font_name is None:
                         font_name = default_font_name
+                else:
+                    font_name = None
 
                 font_size = style.font.size
                 if font_size is None and base_style is not None:
@@ -169,19 +174,49 @@ class DOCX:
                     left_indent = style.paragraph_format.left_indent
                 if left_indent is not None:
                     left_indent = left_indent.mm
+                else:
+                    left_indent = 0
+
+                right_indent = paragraph.paragraph_format.right_indent
+                if right_indent is None:
+                    right_indent = style.paragraph_format.right_indent
+                if right_indent is not None:
+                    right_indent = right_indent.mm
+                else:
+                    right_indent = 0
 
                 first_line_indent = paragraph.paragraph_format.first_line_indent
                 if first_line_indent is None:
                     first_line_indent = style.paragraph_format.first_line_indent
                 if first_line_indent is not None:
                     first_line_indent = first_line_indent.mm
+                else:
+                    first_line_indent = 0
 
                 # Интервал
+                space_after = paragraph.paragraph_format.space_after
+                if space_after is None:
+                    space_after = style.paragraph_format.space_after
+                if space_after is None and base_style is not None:
+                    space_after = base_style.paragraph_format.space_after
+                else:
+                    space_after = 0
+
+                space_before = paragraph.paragraph_format.space_before
+                if space_before is None:
+                    space_before = style.paragraph_format.space_before
+                if space_before is None and base_style is not None:
+                    space_before = base_style.paragraph_format.space_before
+                else:
+                    space_before = 0
+
                 line_spacing = paragraph.paragraph_format.line_spacing
                 if line_spacing is None:
                     line_spacing = style.paragraph_format.line_spacing
                 if line_spacing is None and base_style is not None:
                     line_spacing = base_style.paragraph_format.line_spacing
+                else:
+                    line_spacing = 0
 
                 line_spacing_rule = paragraph.paragraph_format.line_spacing_rule
                 if line_spacing_rule is None:
@@ -222,24 +257,29 @@ class DOCX:
                                       'style': {
                                           'paragraph_style_id': paragraph_style_id,
                                           'paragraph_style_name': paragraph_style_name,
-                                          'paragraph_base_style_name': paragraph_base_style_name
+                                          'paragraph_style_type': paragraph_style_type,
+                                          'paragraph_base_style_name': paragraph_base_style_name,
+                                          'paragraph_base_style_type': paragraph_base_style_type
                                       },
                                       'text_property': {
                                           'font_name': font_name,
                                           'font_size': font_size,
                                           'is_bold': font_is_bold,
                                           'all_caps': all_caps,
-                                          'alignment': alignment,
                                       },
                                       'list_property': list_property,
                                       'paragraph_format': {
+                                          'alignment': alignment,
                                           'left_indent': left_indent,
+                                          'right_indent': right_indent,
                                           'first_line_indent': first_line_indent,
+                                          'space_after': space_after,
+                                          'space_before': space_before,
                                           'line_spacing': line_spacing,
                                           'line_spacing_rule': line_spacing_rule,
                                       },
                                       'images': images}
-                print(paragraph_property)
+                # print(paragraph_property)
                 self.document_property['paragraphs'].append(paragraph_property)
 
             except Exception as err:
