@@ -77,9 +77,17 @@ class DOCX:
 
     def property_constructor(self):
 
+        def get_outlineLvl(style):
+            root = ET.fromstring(style.element.xml)
+            namespace = style.element.nsmap
+
+            outlineLvl = root.findall('.//w:outlineLvl', namespace)
+            for outline in outlineLvl:
+                outlineLvl_value = outline.attrib['{{{0}}}val'.format(namespace['w'])]
+                return outlineLvl_value
+
         def get_image_id_in_paragraph(paragraph):
             """
-
             :type paragraph: object
             """
             ids = []
@@ -113,13 +121,17 @@ class DOCX:
         self.document_property['paragraphs'] = []
         for index, paragraph in enumerate(self.doc.paragraphs):
             try:
-                paragraph_style_id = paragraph.style.style_id
-                paragraph_style_name = paragraph.style.name
-                paragraph_style_type = paragraph.style.type
-                paragraph_base_style = paragraph.style.base_style
-                if paragraph_base_style is not None:
-                    paragraph_base_style_name = paragraph_base_style.name
-                    paragraph_base_style_type = paragraph_base_style.type
+                style = paragraph.style
+                base_style = style.base_style
+
+                paragraph_style_id = style.style_id
+                paragraph_style_name = style.name
+                paragraph_style_type = style.type
+                outlineLvl = get_outlineLvl(style)
+
+                if base_style is not None:
+                    paragraph_base_style_name = base_style.name
+                    paragraph_base_style_type = base_style.type
                 else:
                     paragraph_base_style_name = None
                     paragraph_base_style_type = None
@@ -127,8 +139,6 @@ class DOCX:
                 text = paragraph.text
 
                 # Параметры шрифта
-                style = paragraph.style
-                base_style = style.base_style
 
                 if style.font is not None:
                     font_name = style.font.name
@@ -242,10 +252,10 @@ class DOCX:
                     images.append(self.doc.part.related_parts[image_id])
 
                 # Списки
-                paragraph_proprty_path = paragraph._p.pPr
-                if paragraph_proprty_path is not None and paragraph_proprty_path.numPr is not None:
-                    numId = str(paragraph_proprty_path.numPr.numId.val)
-                    ilvl = str(paragraph_proprty_path.numPr.ilvl.val)
+                paragraph_property_path = paragraph._p.pPr
+                if paragraph_property_path is not None and paragraph_property_path.numPr is not None:
+                    numId = str(paragraph_property_path.numPr.numId.val)
+                    ilvl = str(paragraph_property_path.numPr.ilvl.val)
                     list_property = self.numbering_properties[numId][ilvl]
                     list_property['numId'] = numId
                     list_property['ilvl'] = ilvl
@@ -259,7 +269,8 @@ class DOCX:
                                           'paragraph_style_name': paragraph_style_name,
                                           'paragraph_style_type': paragraph_style_type,
                                           'paragraph_base_style_name': paragraph_base_style_name,
-                                          'paragraph_base_style_type': paragraph_base_style_type
+                                          'paragraph_base_style_type': paragraph_base_style_type,
+                                          'outlineLvl': outlineLvl
                                       },
                                       'text_property': {
                                           'font_name': font_name,

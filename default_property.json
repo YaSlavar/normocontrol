@@ -10,6 +10,7 @@
     "condition": null,
     "error_message": "Не соблюдены размеры полей: {}"
   },
+
   "primary_text_style":{
     "path": "paragraphs",
     "text_property": {
