@@ -36,7 +36,8 @@ class Normocontrol(DOCX):
             elif path_to_properties == "paragraphs":
                 paragraphs = self.document_property['paragraphs']
                 for paragraph in paragraphs:
-                    print(paragraph)
+                    if paragraph['style']['outlineLvl'] is not None:
+                        print(paragraph)
 
         return self.ERR_LIST
 

@@ -127,7 +127,10 @@ class DOCX:
                 paragraph_style_id = style.style_id
                 paragraph_style_name = style.name
                 paragraph_style_type = style.type
+
                 outlineLvl = get_outlineLvl(style)
+                if outlineLvl is None and base_style is not None:
+                    outlineLvl = get_outlineLvl(base_style)
 
                 if base_style is not None:
                     paragraph_base_style_name = base_style.name
