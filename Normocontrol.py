@@ -16,32 +16,35 @@ class Normocontrol(DOCX):
 
     def run(self):
 
-        for name in self.default_property:
-            path_to_properties = self.default_property[name]['path']
-            if path_to_properties == "document_body_property":
-                body_properties = self.document_property[path_to_properties]
-                default_body = self.default_property[name]
-                default_body_properties = self.default_property[name]['properties']
-                for body_property in body_properties:
+        for section in self.default_property:
 
-                    if int(body_properties[body_property]) == default_body_properties[body_property]:
-                        print('{}:{} = {}'.format(body_property, body_properties[body_property],
-                                                  default_body_properties[body_property]))
-                    else:
+            if section == "document_body_property":
+                body_properties = self.document_property[section]
+                default_body_properties = self.default_property[section]
+                for name in default_body_properties:
+                    default_body_properties = self.default_property[section][name]['properties']
 
-                        err_str = default_body['error_message'].format(
-                            '{}:{} != {}'.format(body_property, body_properties[body_property],
-                                                 default_body_properties[body_property]))
-                        self.ERR_LIST.append(err_str)
-            elif path_to_properties == "paragraphs":
+                    for default_body_property in default_body_properties:
+
+                        if int(body_properties[default_body_property]) == default_body_properties[default_body_property]:
+                            print('{}:{} = {}'.format(default_body_property, body_properties[default_body_property],
+                                                      default_body_properties[default_body_property]))
+                        else:
+                            err_str = default_body_property['error_message'].format(
+                                '{}:{} != {}'.format(default_body_property, body_properties[default_body_property],
+                                                     default_body_properties[default_body_property]))
+                            self.ERR_LIST.append(err_str)
+
+            elif section == "paragraphs":
                 paragraphs = self.document_property['paragraphs']
                 for paragraph in paragraphs:
-                    if paragraph['style']['outlineLvl'] is not None:
+                    # print(paragraph)
+                    if paragraph['style']['outlineLvl'] is not None and paragraph['text_property']['is_bold'] is True:
                         print(paragraph)
 
         return self.ERR_LIST
 
 
 if __name__ == '__main__':
-    nc = Normocontrol('document.docx', 'default_property.json')
+    nc = Normocontrol('380305__Фокина_ОС.docx', 'default_property.json')
     print(nc.run())

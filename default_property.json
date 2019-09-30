@@ -1,33 +1,82 @@
 {
-  "mockup_properties": {
-    "path": "document_body_property",
-    "properties": {
-      "top": 20,
-      "bottom": 20,
-      "left": 30,
-      "right": 10
+  "document_body_property": {
+    "mockup_properties": {
+      "properties": {
+        "top": 20,
+        "bottom": 20,
+        "left": 30,
+        "right": 10
       },
-    "condition": null,
-    "error_message": "Не соблюдены размеры полей: {}"
+      "error_message": "Не соблюдены размеры полей: {}"
+    }
   },
-
-  "primary_text_style":{
-    "path": "paragraphs",
-    "text_property": {
+  "paragraphs": {
+    "primary_text_style": {
+      "text_property": {
         "font_name": "Times New Roman",
         "font_size": 14
       },
-    "paragraph_format": {
+      "paragraph_format": {
         "alignment": "JUSTIFY",
         "left_indent": 0,
         "right_indent": 0,
-        "first_line_indent":12.5,
+        "first_line_indent": 12.5,
         "space_after": 0,
         "space_before": 0,
         "line_spacing": 0,
         "line_spacing_rule": "ONE_POINT_FIVE"
+      },
+      "error_message": "Не соблюдены параметры основного текста {} в абзаце {}"
     },
-    "condition": null,
-    "error_message": "Не соблюдены параметры основного текста {} в абзаце {}"
+    "quotes": {
+      "english": {
+        "text_patterns": [
+          "«[A-z\\d\\s]+»"
+        ],
+        "error_message": "Для английского текста необходимо использовать кавычки вида {} в абзаце {}"
+      },
+      "russian": {
+        "text_patterns": [
+          "“[А-я\\d\\s]+”"
+        ],
+        "error_message": "Для русского текста необходимо использовать кавычки вида {} в абзаце {}"
+      }
+    },
+    "hyphen": {
+      "text_patterns": [
+        "[\\w\\d]+ -[\\w\\d]+",
+        "[\\w\\d]+- [\\w\\d]+",
+        "[\\w\\d]+ - [\\w\\d]+"
+      ],
+      "error_message": "В абзаце {} Знак дефиса «-» не разделяется пробелами и используется:\n—\tдля соединения сложных слов, содержащих дефисы\n—\tдля диапазонов и интервалов."
+    },
+    "dash": {
+      "text_patterns": [
+        "[\\w\\d]+—[\\w\\d]+",
+        "[\\w\\d]+ —[\\w\\d]+",
+        "[\\w\\d]+— [\\w\\d]+"
+      ],
+      "error_message": "В абзаце {} Знак тире «—» разделяется пробелами и используется в соответствии с правилами пунктуации."
+    },
+    "headers": {
+      "heading1": {
+        "text_property": {
+          "font_name": "Times New Roman",
+          "is_bold": "True",
+          "font_size": 18
+        },
+        "paragraph_format": {
+          "alignment": "LEFT",
+          "left_indent": 12.5,
+          "right_indent": 0,
+          "first_line_indent": 0,
+          "space_before": 0,
+          "space_after": 10,
+          "line_spacing": 0,
+          "line_spacing_rule": "ONE_POINT_FIVE"
+        },
+        "error_message": "Не соблюдены параметры основного текста {} в абзаце {}"
+      }
+    }
   }
 }

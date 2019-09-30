@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from docx.enum.style import WD_STYLE_TYPE
 from docx.text.font import Font
 
+
 class DOCX:
 
     def __init__(self, document_path):
@@ -112,11 +113,11 @@ class DOCX:
 
         document_body_property_object = self.doc._body._element.sectPr
         self.document_property['document_body_property'] = {
-                "top": document_body_property_object.top_margin.mm,
-                "bottom": document_body_property_object.bottom_margin.mm,
-                "left": document_body_property_object.left_margin.mm,
-                "right": document_body_property_object.right_margin.mm
-            }
+            "top": document_body_property_object.top_margin.mm,
+            "bottom": document_body_property_object.bottom_margin.mm,
+            "left": document_body_property_object.left_margin.mm,
+            "right": document_body_property_object.right_margin.mm
+        }
 
         self.document_property['paragraphs'] = []
         for index, paragraph in enumerate(self.doc.paragraphs):
@@ -212,6 +213,8 @@ class DOCX:
                     space_after = style.paragraph_format.space_after
                 if space_after is None and base_style is not None:
                     space_after = base_style.paragraph_format.space_after
+                if space_after is not None:
+                    space_after = space_after.mm
                 else:
                     space_after = 0
 
@@ -220,6 +223,8 @@ class DOCX:
                     space_before = style.paragraph_format.space_before
                 if space_before is None and base_style is not None:
                     space_before = base_style.paragraph_format.space_before
+                if space_before is not None:
+                    space_before = space_before.mm
                 else:
                     space_before = 0
 
