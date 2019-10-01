@@ -12,7 +12,7 @@ class DOCX:
         self.styles = self.get_styles_from_docx()
         self.numbering_properties = self.get_lists_properties()
         self.document_property = {}
-        self.property_constructor()
+        self.property_constructor
 
     def __str__(self):
         return str(self.document_path)
@@ -76,6 +76,7 @@ class DOCX:
 
         return numId_list
 
+    @property
     def property_constructor(self):
 
         def get_outlineLvl(style):
@@ -119,7 +120,8 @@ class DOCX:
             "right": document_body_property_object.right_margin.mm
         }
 
-        self.document_property['paragraphs'] = []
+        self.document_property['sections'] = []
+        paragraphs_list = {}
         for index, paragraph in enumerate(self.doc.paragraphs):
             try:
                 style = paragraph.style
@@ -270,7 +272,15 @@ class DOCX:
                 else:
                     list_property = None
 
+                # Тип секции
+                section_type = 'paragraph'
+                if outlineLvl is not None:
+                    section_type = "Header"
+                if list_property is not None:
+                    section_type = "list"
+
                 paragraph_property = {'index': index,
+                                      'type': section_type,
                                       'text': text,
                                       'style': {
                                           'paragraph_style_id': paragraph_style_id,
@@ -299,7 +309,18 @@ class DOCX:
                                       },
                                       'images': images}
                 # print(paragraph_property)
-                self.document_property['paragraphs'].append(paragraph_property)
+                if section_type == "list" and paragraphs_list == {}:
+                    paragraphs_list['type'] = 'list'
+                    paragraphs_list['marker_format'] = list_property['numFmt']
+                    paragraphs_list['paragraphs'] = []
+                if section_type == "list":
+                    paragraphs_list['paragraphs'].append(paragraph_property)
+                elif section_type != 'list' and paragraphs_list != {}:
+                    self.document_property['sections'].append(paragraphs_list)
+                    self.document_property['sections'].append(paragraph_property)
+                    paragraphs_list = {}
+                else:
+                    self.document_property['sections'].append(paragraph_property)
 
             except Exception as err:
                 print(err)

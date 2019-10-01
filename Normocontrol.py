@@ -26,7 +26,8 @@ class Normocontrol(DOCX):
 
                     for default_body_property in default_body_properties:
 
-                        if int(body_properties[default_body_property]) == default_body_properties[default_body_property]:
+                        if int(body_properties[default_body_property]) == default_body_properties[
+                            default_body_property]:
                             print('{}:{} = {}'.format(default_body_property, body_properties[default_body_property],
                                                       default_body_properties[default_body_property]))
                         else:
@@ -35,12 +36,14 @@ class Normocontrol(DOCX):
                                                      default_body_properties[default_body_property]))
                             self.ERR_LIST.append(err_str)
 
-            elif section == "paragraphs":
-                paragraphs = self.document_property['paragraphs']
+            elif section == "sections":
+                paragraphs = self.document_property['sections']
                 for paragraph in paragraphs:
-                    # print(paragraph)
-                    if paragraph['style']['outlineLvl'] is not None and paragraph['text_property']['is_bold'] is True:
-                        print(paragraph)
+                    print(paragraph)
+                    # if paragraph['style']['outlineLvl'] is not None and paragraph['text_property']['is_bold'] is True:
+                    #     print(paragraph)
+                    # if paragraph['list_property'] is not None:
+                    #     print(paragraph)
 
         return self.ERR_LIST
 

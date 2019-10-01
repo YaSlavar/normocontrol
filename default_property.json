@@ -10,7 +10,7 @@
       "error_message": "Не соблюдены размеры полей: {}"
     }
   },
-  "paragraphs": {
+  "sections": {
     "primary_text_style": {
       "text_property": {
         "font_name": "Times New Roman",
@@ -62,8 +62,9 @@
       "heading1": {
         "text_property": {
           "font_name": "Times New Roman",
+          "font_size": 18,
           "is_bold": "True",
-          "font_size": 18
+          "all_caps": "True"
         },
         "paragraph_format": {
           "alignment": "LEFT",
@@ -75,7 +76,52 @@
           "line_spacing": 0,
           "line_spacing_rule": "ONE_POINT_FIVE"
         },
-        "error_message": "Не соблюдены параметры основного текста {} в абзаце {}"
+        "condition": {
+          "style['outlineLvl']": "0"
+        },
+        "error_message": "Не соблюдены параметры заголовка первого уровня {} в абзаце {}"
+      },
+      "heading2": {
+        "text_property": {
+          "font_name": "Times New Roman",
+          "font_size": 16,
+          "is_bold": "True"
+        },
+        "paragraph_format": {
+          "alignment": "LEFT",
+          "left_indent": 12.5,
+          "right_indent": 0,
+          "first_line_indent": 0,
+          "space_before": 15,
+          "space_after": 10,
+          "line_spacing": 0,
+          "line_spacing_rule": "ONE_POINT_FIVE"
+        },
+        "condition": {
+          "style['outlineLvl']": "1"
+        },
+        "error_message": "Не соблюдены параметры заголовка второго уровня {} в абзаце {}"
+      },
+      "heading3": {
+        "text_property": {
+          "font_name": "Times New Roman",
+          "font_size": 14,
+          "is_bold": "True"
+        },
+        "paragraph_format": {
+          "alignment": "LEFT",
+          "left_indent": 12.5,
+          "right_indent": 0,
+          "first_line_indent": 0,
+          "space_before": 15,
+          "space_after": 10,
+          "line_spacing": 0,
+          "line_spacing_rule": "ONE_POINT_FIVE"
+        },
+        "condition": {
+          "style['outlineLvl']": ">=2"
+        },
+        "error_message": "Не соблюдены параметры заголовка третьего и последующих уровней {} в абзаце {}"
       }
     }
   }
